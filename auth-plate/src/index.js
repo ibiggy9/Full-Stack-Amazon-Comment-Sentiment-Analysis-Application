@@ -1,0 +1,16 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+import "bootstrap/dist/css/bootstrap.min.css"
+import 'idempotent-babel-polyfill';
+
+if (!global._babelPolyfill) {
+	require('idempotent-babel-polyfill');
+}
+
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
