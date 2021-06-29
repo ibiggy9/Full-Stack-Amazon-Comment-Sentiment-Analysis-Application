@@ -15,7 +15,8 @@ export default function SearchEntry() {
         processing, 
         classification,
         sentPercent,
-        commentState
+        commentState,
+        setMarket
     } = useAuth()
 
     
@@ -23,7 +24,7 @@ export default function SearchEntry() {
 
 
     function goBack(e) {
-        window.location.reload()
+        setMarket(null)
         
      }
     
