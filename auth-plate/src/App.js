@@ -2,7 +2,7 @@ import SignUp from "./Components/SignUp"
 import Dashboard from './Components/Dashboard'
 import Login from './Components/Login'
 import { AuthProvider } from "./Context/AuthContext"
-import { BrowserRouter  as Router, Route, Switch } from 
+import { HashRouter, BrowserRouter  as Router, Route, Switch } from 
 'react-router-dom'
 import PrivateRoute from "./Components/PrivateRoute"
 import Forgot from './Components/Forgot'
@@ -14,7 +14,7 @@ function App() {
   return (
     <div>
     <AuthProvider>
-        
+        <HashRouter>
           <Router>
             <Switch>
             <Route path='/signup' component={SignUp} />
@@ -25,6 +25,7 @@ function App() {
             <Route path='/forgot-password' component={Forgot} />
             </Switch>
           </Router>
+          </HashRouter>
    
    
 
