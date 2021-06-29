@@ -19,7 +19,7 @@ export default function SearchEntry() {
         setMarket
     } = useAuth()
 
-    
+    // making a note
 
 
 
