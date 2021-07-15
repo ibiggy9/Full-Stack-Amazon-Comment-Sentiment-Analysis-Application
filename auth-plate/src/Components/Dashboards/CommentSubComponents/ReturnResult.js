@@ -8,7 +8,7 @@ export default function ReturnResult({response}) {
         let sentimentList = []
 
         return(
-            <Card>
+            <Card style={{maxWidth:'800px'}}>
             <Card.Body>
             <Card.Title>{response.Product}</Card.Title>
             <Card.Subtitle className="mb-2 text-muted">{response.Rating}</Card.Subtitle>

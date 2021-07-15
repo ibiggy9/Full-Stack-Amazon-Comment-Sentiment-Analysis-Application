@@ -21,7 +21,7 @@ export default function MarketSelect() {
     }
 
     return (
-       <Container className="mb-5 mt-3">
+       <Container className="mb-5 mt-3" style={{maxWidth:'800px'}}>
                 <Form onSubmit={selectMarket}>
                 <Form.Group>
                     <Form.Label>First Select Your Market: </Form.Label>

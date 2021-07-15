@@ -16,12 +16,14 @@ export function useAuth() {
 export function AuthProvider({ children  }) {
     const [currentUser, setCurrentUser ] = useState()
     const [commentState, setCommentState] = useState([])
+    const [searched, setSearched] = useState(false)
     const [loading, setLoading] = useState(true)
     const [creationError, setCreationError] = useState()
     const [market, setMarket] = useState('')
     const [search, setSearch] = useState([])
     const [joinedState, setJoinedState] = useState([])
     const [error, setError] = useState()
+    const [noresult, setNoresult] = useState(false)
     const [sentScore, setSentScore] = useState('')
     const [classification, setClassification] = useState('')
     const [sentPercent, setSentPercent ] = useState(0)
@@ -30,6 +32,7 @@ export function AuthProvider({ children  }) {
     let commentList = []
     let joinedlist = []
     let sentiment
+    
 
 
 
@@ -67,13 +70,13 @@ export function AuthProvider({ children  }) {
         const unsubscribe = auth.onAuthStateChanged((user) => {
             setCurrentUser(user)
             setLoading(false)  
+            
         })
         return unsubscribe
     }, [])
 
     function makeRequest(countryCode) {
         return new Promise((resolve, reject) => {
-                
             if (countryCode === 'US') {
             const ref = db.ref(`/US/Product`)
             ref.on('value', (snapshot) => {
@@ -89,7 +92,7 @@ export function AuthProvider({ children  }) {
                 })
             })}
             if(searchList){
-                console.log('done!')
+
                 resolve(searchList)
               } else {
               reject('Database failed')
@@ -98,18 +101,45 @@ export function AuthProvider({ children  }) {
             
         function processing(product, comment){
             return new Promise((resolve, reject) => {
+                setNoresult(false)
                 setSearch(searchList)
+                const stringSplit = product.split(" ")
+                for (var i = 0; i < stringSplit.length; i++) {
+                stringSplit[i] = stringSplit[i].charAt(0).toUpperCase() + stringSplit[i].slice(1)
+                }
+                let productUpperFirst = stringSplit.join(" ")
+                
+                
                 if (searchList.length > 0) {
                 clearSearch()
-                 } 
+                } 
+
+                if (search.length < 2) {
+                    productUpperFirst = product.toUpperCase()
+                }
                 search.map((item) => {
-                    if (product && item.Product.includes(product)){
+                    
+                    if (productUpperFirst && item.Product.includes(productUpperFirst)){
                         if(item.Comment.includes(comment)){
                             commentList.push(item) 
                             joinedlist.push(item.Comment)  
                         }} 
 
                     })
+                
+                if (commentList.length < 2) {
+                    productUpperFirst = product.toUpperCase()
+                    search.map((item) => {
+                    
+                        if (productUpperFirst && item.Product.includes(productUpperFirst)){
+                            if(item.Comment.includes(comment)){
+                                commentList.push(item) 
+                                joinedlist.push(item.Comment)  
+                            }} 
+    
+                        })
+
+                }
 
                 if (commentList != 0) {
                     resolve([setCommentState(commentList), setJoinedState(joinedlist.join())])
@@ -117,14 +147,15 @@ export function AuthProvider({ children  }) {
                     ///setJoinedState(joinedlist.join())
                 } else {
                     reject(setCommentState(commentList))
+                    setNoresult(true)
                     clearComments()
                     setJoinedState([])
                 }
                 })  
             }
 
-
-         sentiment = ml5.sentiment('movieReviews', loadModel)
+        
+        sentiment = ml5.sentiment('movieReviews', loadModel)
        
         function loadModel(){
             return new Promise((res, rej) => {
@@ -137,13 +168,13 @@ export function AuthProvider({ children  }) {
             })
 
             function modelLoaded(){
-                console.log('Model Loaded')
+      
                 if (joinedState.length > 0){
                 const score = sentiment.predict(joinedState)
                 setSentScore(score.score)} else {
                     setSentScore(0.6393421292304993)
                 }
-                console.log(sentScore)
+                
                 if (sentScore){
 
                     if(sentScore == 0.6393421292304993){
@@ -163,15 +194,15 @@ export function AuthProvider({ children  }) {
                         setClassification('No Result')
                     }
                     else if(sentScore > 0.000000000000000000000001 && sentScore < 0.25){
-                        setClassification('Very Poor')
+                        setClassification('Negative')
                     } else if(sentScore > 0.251 && sentScore < 0.5){
-                        setClassification('Poor')
+                        setClassification('Slightly Negative')
                     } else if(sentScore >0.501 && sentScore < 0.65) {
                         setClassification('Neutral')
                     } else if(sentScore > 0.651 && sentScore < 0.75){
-                        setClassification('Good')
+                        setClassification('Slightly Positive')
                     } else if(sentScore > 0.751 ){
-                        setClassification('Excellent')
+                        setClassification('Stellar')
                     }
                     return [classification, sentPercent]
                 
@@ -211,7 +242,11 @@ export function AuthProvider({ children  }) {
         sentScore,
         classification,
         sentPercent,
-        commentState
+        commentState,
+        searched,
+        setSearched, 
+        noresult,
+        setNoresult,
      
 
     }

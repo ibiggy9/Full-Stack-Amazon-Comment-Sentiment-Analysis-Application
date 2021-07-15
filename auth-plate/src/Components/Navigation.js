@@ -11,7 +11,9 @@ export default function Navigation() {
             <Navbar variant="dark" bg="dark" expand="lg" className="justify-content-between">
             <Container>
                     <Form inline className='p-3'>
-                        <Navbar.Brand>Dare Data Intelligence Hub </Navbar.Brand> 
+                        <Navbar.Brand>
+                           <Link to='/' className='btn btn-outline-light'> Dare Data Intelligence Hub </Link> 
+                            </Navbar.Brand> 
                         <Navbar.Brand> <Button variant="light" onClick={handleLogout}> Log Out</Button> </Navbar.Brand>
                     </Form>
                     <Form inline>
