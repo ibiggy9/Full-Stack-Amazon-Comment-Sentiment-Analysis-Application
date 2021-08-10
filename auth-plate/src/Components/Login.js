@@ -73,6 +73,11 @@ export default function Login() {
                         Forgot Password
                     </Link> 
                 </div>
+                <div className="w-100 text-center mt-3">
+                    <Link to="/signup">
+                        Sign-up
+                    </Link> 
+                </div>
                 
             </Card.Body>
         </Card>
