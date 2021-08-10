@@ -107,19 +107,20 @@ export function AuthProvider({ children  }) {
                 for (var i = 0; i < stringSplit.length; i++) {
                 stringSplit[i] = stringSplit[i].charAt(0).toUpperCase() + stringSplit[i].slice(1)
                 }
+         
                 let productUpperFirst = stringSplit.join(" ")
                 
-                
+                // if there is anything left over from last search, clear. 
                 if (searchList.length > 0) {
                 clearSearch()
                 } 
-
+                // because there is one product in our data base that is upper case, we change it to upper first
                 if (search.length < 2) {
                     productUpperFirst = product.toUpperCase()
                 }
                 search.map((item) => {
                     
-                    if (productUpperFirst && item.Product.includes(productUpperFirst)){
+                    if (stringSplit.every(v => item.Product.includes(v))){
                         if(item.Comment.includes(comment)){
                             commentList.push(item) 
                             joinedlist.push(item.Comment)  
