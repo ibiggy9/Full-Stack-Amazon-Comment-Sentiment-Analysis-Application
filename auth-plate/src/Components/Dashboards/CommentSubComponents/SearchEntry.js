@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Form, Container, Button, Col, Row, Card, Navbar, Alert, Tooltip, OverlayTrigger } from 'react-bootstrap'
-import { useHistory, Link } from 'react-router-dom'
 import { useAuth } from '../../../Context/AuthContext'
 import ReturnResult from './ReturnResult'
 
@@ -35,31 +34,37 @@ export default function SearchEntry() {
          await processing(productRef.current.value, commentRef.current.value)     
      }
 
-     const renderTooltip = (props) => (
+     const renderTooltipCa = (props) => (
         <Tooltip id="button-tooltip" {...props}>
-          <h5>Available Brands (Canada Only):</h5>
+          <h4>Available Brands:</h4>
+              <h4>Candy:</h4>
+              <h6>Smart Sweets</h6>
+              <h6>Maynards</h6>
+              <h6>Skittles</h6>
+              <p></p>
+              <p></p>
+              <h4>Crackers:</h4>
+              <h6>Triscuit</h6>
+              <h6>Good Thins</h6>
+              <h6>Goldfish</h6>
+              <h6>Wheat thins</h6>
+              <h6>Cheez it</h6>
+              <p></p>
+              <p></p>
+              <h4>Cookies:</h4>
+              <h6>Chips Ahoy</h6>
+              <h6>Oreo</h6>
           
-          <ul>
-              <h6>Candy</h6>
-              <li>Smart Sweets</li>
-              <li>Maynards</li>
-              <li>Skittles</li>
-          </ul>
-      
-          <ul>
-            <h6>Crackers</h6>
-              <li>Triscuit</li>
-              <li>Good Thins</li>
-              <li>Goldfish</li>
-              <li>Wheat thins</li>
-              <li>Cheez it</li>
-          </ul>
+        </Tooltip>)
 
-          <ul>
-            <h6>Cookies</h6>
-              <li>Chips Ahoy</li>
-              <li>Oreo</li>
-          </ul>
+    const renderTooltipUs = (props) => (
+        <Tooltip id="button-tooltip" {...props}>
+        <h4>Available Brands:</h4>
+        <h6>Carr's </h6>
+        <h6>Milton's </h6>
+        <h6>Simple Mill's</h6>
+        <h6>Crunch Master's </h6>
+        <h6>Blue Diamond </h6>
         </Tooltip>)
      
     useEffect(() =>
@@ -82,6 +87,7 @@ export default function SearchEntry() {
                 <Form.Group>
                     <Form.Control type='text' ref={commentRef} placeholder="Optional: Filter for keywords in comments (Case Sensitive)" />
                 </Form.Group>
+                {market == 'CA' && 
                 <Form.Group>
                     <Row>
                     <Col>
@@ -99,7 +105,7 @@ export default function SearchEntry() {
                     <OverlayTrigger
                     placement="bottom"
                     delay={{ show: 250, hide: 400 }}
-                    overlay={renderTooltip}
+                    overlay={renderTooltipCa}
                 >
                         <Button className='mt-sm-1' variant="dark">Available Competitive Brands</Button>
                 </OverlayTrigger>
@@ -107,6 +113,34 @@ export default function SearchEntry() {
                     </Col>
                     </Row>
                 </Form.Group>
+                }
+                {market == 'US' && 
+                    <Form.Group>
+                    <Row>
+                    <Col>
+                    <Card>
+                    <Button variant="dark" className='mt-sm-1' onClick={goBack}>Select Market</Button>
+                    </Card>
+                    </Col>
+                    <Col>
+                    <Card>
+                    <Button variant='dark' type='submit' className='mt-sm-1'> Search </Button>
+                    </Card>
+                    </Col>
+                    <Col>
+                    <Card>
+                    <OverlayTrigger
+                    placement="bottom"
+                    delay={{ show: 250, hide: 400 }}
+                    overlay={renderTooltipUs}
+                >
+                        <Button className='mt-sm-1' variant="dark">Available Competitive Brands</Button>
+                </OverlayTrigger>
+                    </Card>
+                    </Col>
+                    </Row>
+                </Form.Group>
+                }
                 </Form>
                 <Card className='mt-2 p-3'>
                 <h4>Consumer Sentiment:</h4>

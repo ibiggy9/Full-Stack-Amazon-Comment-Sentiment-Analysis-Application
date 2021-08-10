@@ -12,14 +12,8 @@ export default function CommentDashboard() {
     const [error, setError] = useState('')
     const { logout, currentUser, makeRequest, searchList, clearSearch, search, setSearch, setMarket, market} = useAuth()
     const marketRef = useRef()
-   
 
     
-            
-
-        
-    
-
     async function Search(e) {
         e.preventDefault()
         try {
