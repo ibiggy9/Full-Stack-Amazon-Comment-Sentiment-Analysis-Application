@@ -226,11 +226,13 @@ export function AuthProvider({ children  }) {
     function track(productTerm, commentTerm){
         const ref = db.ref('/Responses/Users')
         const user = auth.currentUser.email
-        const formattedUser = user.replace('.com', '')
-        ref.child(formattedUser).set({
+        const userData = {
             'Product Search': productTerm ,
             'Comment Search': commentTerm ,
-        })
+        }
+        const formattedUser = user.replace('.com', '')
+        const uidPush = ref.child(formattedUser).push()
+        uidPush.set(userData)
     }
     
     const value = {
