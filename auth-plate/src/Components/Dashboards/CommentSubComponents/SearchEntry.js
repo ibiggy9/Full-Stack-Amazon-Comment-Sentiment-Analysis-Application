@@ -31,9 +31,9 @@ export default function SearchEntry() {
      async function handleSearch(e){
          e.preventDefault()
          setSearched(true)
-         await makeRequest(market)
-         await track(productRef.current.value, commentRef.current.value)
-         await processing(productRef.current.value, commentRef.current.value)     
+         await makeRequest(market)  
+         await processing(productRef.current.value, commentRef.current.value)
+ 
      }
 
      const renderTooltipCa = (props) => (
@@ -75,6 +75,7 @@ export default function SearchEntry() {
         setSearched(false)
         makeRequest(market)
         processing('test', 'test')
+  
 
     }, [])
 

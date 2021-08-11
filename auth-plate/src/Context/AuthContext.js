@@ -28,11 +28,13 @@ export function AuthProvider({ children  }) {
     const [sentScore, setSentScore] = useState('')
     const [classification, setClassification] = useState('')
     const [sentPercent, setSentPercent ] = useState(0)
+    const [commentCount, setCommentCount] = useState(0)
     const history = useHistory()
     let searchList = []
     let commentList = []
     let joinedlist = []
     let sentiment
+    let count = 0
     
 
 
@@ -124,9 +126,9 @@ export function AuthProvider({ children  }) {
                 if (stringSplit.every(v => item.Product.includes(v))){
                     if(item.Comment.includes(comment)){
                         commentList.push(item) 
-                        joinedlist.push(item.Comment)  
+                        joinedlist.push(item.Comment) 
                     }} 
-
+      
                 })
             
             if (commentList.length < 2) {
@@ -144,7 +146,7 @@ export function AuthProvider({ children  }) {
             }
 
             if (commentList != 0) {
-                resolve([setCommentState(commentList), setJoinedState(joinedlist.join())])
+                resolve([setCommentState(commentList), setJoinedState(joinedlist.join()), count = commentList.length, track(product, comment)])
                 clearComments()
                 ///setJoinedState(joinedlist.join())
             } else {
@@ -152,6 +154,8 @@ export function AuthProvider({ children  }) {
                 setNoresult(true)
                 clearComments()
                 setJoinedState([])
+                count = 0
+                track(product, comment)
             }
             })  
         }
@@ -229,10 +233,12 @@ export function AuthProvider({ children  }) {
         const userData = {
             'Product Search': productTerm ,
             'Comment Search': commentTerm ,
+            'Result Count': count,
         }
         const formattedUser = user.replace('.com', '')
         const uidPush = ref.child(formattedUser).push()
-        uidPush.set(userData)
+        if (productTerm != 'test'){
+        uidPush.set(userData)}
     }
     
     const value = {
