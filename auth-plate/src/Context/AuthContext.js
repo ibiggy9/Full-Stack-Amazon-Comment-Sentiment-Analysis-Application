@@ -2,6 +2,7 @@ import React, {useContext, useState, useEffect} from 'react'
 import { auth } from '../firebase'
 import { db } from '../firebase'
 import { useHistory } from 'react-router-dom'
+import { format } from 'date-fns'
 const ml5 = window.ml5
 
 
@@ -99,119 +100,119 @@ export function AuthProvider({ children  }) {
               }})}
             
             
-        function processing(product, comment){
-            return new Promise((resolve, reject) => {
-                setNoresult(false)
-                setSearch(searchList)
-                const stringSplit = product.split(" ")
-                for (var i = 0; i < stringSplit.length; i++) {
-                stringSplit[i] = stringSplit[i].charAt(0).toUpperCase() + stringSplit[i].slice(1)
-                }
-         
-                let productUpperFirst = stringSplit.join(" ")
+    function processing(product, comment){
+        return new Promise((resolve, reject) => {
+            setNoresult(false)
+            setSearch(searchList)
+            const stringSplit = product.split(" ")
+            for (var i = 0; i < stringSplit.length; i++) {
+            stringSplit[i] = stringSplit[i].charAt(0).toUpperCase() + stringSplit[i].slice(1)
+            }
+        
+            let productUpperFirst = stringSplit.join(" ")
+            
+            // if there is anything left over from last search, clear. 
+            if (searchList.length > 0) {
+            clearSearch()
+            } 
+            // because there is one product in our data base that is upper case, we change it to upper first
+            if (search.length < 2) {
+                productUpperFirst = product.toUpperCase()
+            }
+            search.map((item) => {
                 
-                // if there is anything left over from last search, clear. 
-                if (searchList.length > 0) {
-                clearSearch()
-                } 
-                // because there is one product in our data base that is upper case, we change it to upper first
-                if (search.length < 2) {
-                    productUpperFirst = product.toUpperCase()
-                }
+                if (stringSplit.every(v => item.Product.includes(v))){
+                    if(item.Comment.includes(comment)){
+                        commentList.push(item) 
+                        joinedlist.push(item.Comment)  
+                    }} 
+
+                })
+            
+            if (commentList.length < 2) {
+                productUpperFirst = product.toUpperCase()
                 search.map((item) => {
-                    
-                    if (stringSplit.every(v => item.Product.includes(v))){
+                
+                    if (productUpperFirst && item.Product.includes(productUpperFirst)){
                         if(item.Comment.includes(comment)){
                             commentList.push(item) 
                             joinedlist.push(item.Comment)  
                         }} 
 
                     })
-                
-                if (commentList.length < 2) {
-                    productUpperFirst = product.toUpperCase()
-                    search.map((item) => {
-                    
-                        if (productUpperFirst && item.Product.includes(productUpperFirst)){
-                            if(item.Comment.includes(comment)){
-                                commentList.push(item) 
-                                joinedlist.push(item.Comment)  
-                            }} 
-    
-                        })
 
-                }
-
-                if (commentList != 0) {
-                    resolve([setCommentState(commentList), setJoinedState(joinedlist.join())])
-                    clearComments()
-                    ///setJoinedState(joinedlist.join())
-                } else {
-                    reject(setCommentState(commentList))
-                    setNoresult(true)
-                    clearComments()
-                    setJoinedState([])
-                }
-                })  
             }
 
+            if (commentList != 0) {
+                resolve([setCommentState(commentList), setJoinedState(joinedlist.join())])
+                clearComments()
+                ///setJoinedState(joinedlist.join())
+            } else {
+                reject(setCommentState(commentList))
+                setNoresult(true)
+                clearComments()
+                setJoinedState([])
+            }
+            })  
+        }
+
         
-        sentiment = ml5.sentiment('movieReviews', loadModel)
+    sentiment = ml5.sentiment('movieReviews', loadModel)
        
-        function loadModel(){
-            return new Promise((res, rej) => {
-                const isLoaded = true
-                if(isLoaded == true){
-                    res(modelLoaded())
-                } else {
-                    rej('Model is not loaded')
-                }  
-            })
+    function loadModel(){
+        return new Promise((res, rej) => {
+            const isLoaded = true
+            if(isLoaded == true){
+                res(modelLoaded())
+            } else {
+                rej('Model is not loaded')
+            }  
+        })
 
-            function modelLoaded(){
-      
-                if (joinedState.length > 0){
-                const score = sentiment.predict(joinedState)
-                setSentScore(score.score)} else {
-                    setSentScore(0.6393421292304993)
-                }
-                
-                if (sentScore){
+    function modelLoaded(){
 
-                    if(sentScore == 0.6393421292304993){
-                        const nodec = 0
-                        setSentPercent(0)
-                    } else {
-                    const percent = sentScore*100
-                    if(percent > 1){
-                    const nodec = Math.trunc(percent)
-                    setSentPercent(nodec)}else{
-
-                        setSentPercent(percent)
-                    }}
-                    
+        if (joinedState.length > 0){
+        const score = sentiment.predict(joinedState)
+        setSentScore(score.score)} else {
+            setSentScore(0.6393421292304993)
+        }
         
-                    if(sentScore == 0.6393421292304993){
-                        setClassification('No Result')
-                    }
-                    else if(sentScore > 0.000000000000000000000001 && sentScore < 0.25){
-                        setClassification('Negative')
-                    } else if(sentScore > 0.251 && sentScore < 0.5){
-                        setClassification('Slightly Negative')
-                    } else if(sentScore >0.501 && sentScore < 0.65) {
-                        setClassification('Neutral')
-                    } else if(sentScore > 0.651 && sentScore < 0.75){
-                        setClassification('Slightly Positive')
-                    } else if(sentScore > 0.751 ){
-                        setClassification('Stellar')
-                    }
-                    return [classification, sentPercent]
-                
-                }
+        if (sentScore){
 
-                }
+            if(sentScore == 0.6393421292304993){
+                const nodec = 0
+                setSentPercent(0)
+            } else {
+            const percent = sentScore*100
+            if(percent > 1){
+            const nodec = Math.trunc(percent)
+            setSentPercent(nodec)}else{
 
-                }
+                setSentPercent(percent)
+            }}
+            
+
+            if(sentScore == 0.6393421292304993){
+                setClassification('No Result')
+            }
+            else if(sentScore > 0.000000000000000000000001 && sentScore < 0.25){
+                setClassification('Negative')
+            } else if(sentScore > 0.251 && sentScore < 0.5){
+                setClassification('Slightly Negative')
+            } else if(sentScore >0.501 && sentScore < 0.65) {
+                setClassification('Neutral')
+            } else if(sentScore > 0.651 && sentScore < 0.75){
+                setClassification('Slightly Positive')
+            } else if(sentScore > 0.751 ){
+                setClassification('Stellar')
+            }
+            return [classification, sentPercent]
+        
+        }
+
+        }
+
+        }
 
             
             
@@ -222,6 +223,15 @@ export function AuthProvider({ children  }) {
         commentList=[]
     }
 
+    function track(productTerm, commentTerm){
+        const ref = db.ref('/Responses/Users')
+        const user = auth.currentUser.email
+        const formattedUser = user.replace('.com', '')
+        ref.child(formattedUser).set({
+            'Product Search': productTerm ,
+            'Comment Search': commentTerm ,
+        })
+    }
     
     const value = {
         currentUser,
@@ -248,6 +258,7 @@ export function AuthProvider({ children  }) {
         setSearched, 
         noresult,
         setNoresult,
+        track,
      
 
     }

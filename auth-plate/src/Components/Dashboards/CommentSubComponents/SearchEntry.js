@@ -20,6 +20,7 @@ export default function SearchEntry() {
         setSearched,
         noresult,
         setNoresult,
+        track
     } = useAuth()
 
     function goBack(e) {
@@ -31,6 +32,7 @@ export default function SearchEntry() {
          e.preventDefault()
          setSearched(true)
          await makeRequest(market)
+         await track(productRef.current.value, commentRef.current.value)
          await processing(productRef.current.value, commentRef.current.value)     
      }
 
